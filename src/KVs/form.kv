@@ -1,0 +1,59 @@
+<FormScreen>:
+    name: 'form'
+    MDBoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+
+        MDLabel:
+            text: "Datos Personales"
+            halign: 'center'
+            font_style: 'H5'
+            theme_text_color: 'Primary'
+            size_hint_y: None
+            height: 40
+
+        MDScrollView:
+            MDBoxLayout:
+                orientation: 'vertical'
+                padding: 15
+                spacing: 15
+                adaptive_height: True
+
+                MDTextField:
+                    id: edad
+                    hint_text: "Edad (años)"
+                    helper_text: "15 - 80"
+                    mode: "rectangle"
+                    input_filter: "int"
+
+                MDTextField:
+                    id: peso
+                    hint_text: "Peso (kg)"
+                    helper_text: "30 - 200"
+                    mode: "rectangle"
+                    input_filter: "float"
+
+                MDTextField:
+                    id: altura
+                    hint_text: "Altura"
+                    helper_text: "Selecciona tu altura"
+                    mode: "rectangle"
+                    readonly: True
+                    on_focus: app.abrir_selector_altura(self) if self.focus else None
+
+                MDTextField:
+                    id: horas
+                    hint_text: "Horas disponibles/semana"
+                    helper_text: "1 - 20"
+                    mode: "rectangle"
+                    input_filter: "int"
+
+        MDRaisedButton:
+            id: btn_generar
+            text: "Guardar y continuar"
+            md_bg_color: app.theme_cls.primary_color
+            size_hint_y: None
+            height: 48
+            pos_hint: {'center_x': 0.5}
+            on_release: app.guardar_datos_basicos()
