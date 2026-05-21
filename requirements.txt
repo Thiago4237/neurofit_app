@@ -5,3 +5,4 @@ scikit-learn
 tensorflow
 joblib
 scikit-fuzzy
+kivy>=2.1.0
