@@ -2,55 +2,95 @@ import os
 import json
 
 from datetime import datetime
+
 from kivy.clock import Clock
 from kivy.lang import Builder
+from kivy.resources import resource_find
 from kivy.uix.screenmanager import ScreenManager
+
 from kivymd.app import MDApp
 from kivymd.toast import toast
 from kivymd.uix.menu import MDDropdownMenu
-from kivy.metrics import dp
 from kivymd.uix.card import MDCard
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.label import MDLabel
 
-from src.core.screens import WelcomeScreen, FormScreen, DashboardScreen
+from kivy.metrics import dp
+
+from src.core.screens import (
+    WelcomeScreen,
+    FormScreen,
+    DashboardScreen
+)
+
 from src.ai.engine import NeuroFitEngine
 
+# -----------------------------
+# RUTAS
+# -----------------------------
 
+DATA_DIR = resource_find("data")
 
-# Rutas
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-DATA_DIR = os.path.join(BASE_DIR, 'data')
-USER_DATA_FILE = os.path.join(DATA_DIR, 'user_data.json')
-KVS_DIR = os.path.join(BASE_DIR, 'src', 'kvs')
+USER_DATA_FILE = (
+    os.path.join(DATA_DIR, "user_data.json")
+    if DATA_DIR else None
+)
 
+print("DATA_DIR:", DATA_DIR)
+print("USER_DATA_FILE:", USER_DATA_FILE)
 
+# -----------------------------
+# APP
+# -----------------------------
 class NeuroFitApp(MDApp):
+    
     edit_mode = False
 
     def build(self):
         
         self.theme_cls.primary_palette = "BlueGray"
         self.theme_cls.primary_hue = "500"
-        # self.theme_cls.theme_style = "Dark"
         
         self.user_data = {}
+        
+        # -----------------------------
+        # Engine IA
+        # -----------------------------
         self.engine = NeuroFitEngine()
 
-        # Cargar archivos KV
-        if not os.path.exists(KVS_DIR):
-            print(f"ERROR: No se encuentra {KVS_DIR}")
-        else:
-            for kv_file in os.listdir(KVS_DIR):
-                if kv_file.endswith('.kv'):
-                    Builder.load_file(os.path.join(KVS_DIR, kv_file))
+        # -----------------------------
+        # Cargar KV files
+        # -----------------------------
 
+        kv_files = [
+            "src/kvs/welcome.kv",
+            "src/kvs/form.kv",
+            "src/kvs/dashboard.kv"
+        ]
+
+        for kv in kv_files:
+
+            kv_path = resource_find(kv)
+
+            print("KV:", kv)
+            print("KV_PATH:", kv_path)
+
+            if kv_path:
+                Builder.load_file(kv_path)
+            else:
+                print(f"ERROR: No se encontró {kv}")
+                
+        # -----------------------------
+        # ScreenManager
+        # -----------------------------
         self.sm = ScreenManager()
         self.sm.add_widget(WelcomeScreen(name='welcome'))
         self.sm.add_widget(FormScreen(name='form'))
         self.sm.add_widget(DashboardScreen(name='dashboard'))
 
+        # -----------------------------
         # Cargar datos previos
+        # -----------------------------
         if self.cargar_datos():
             Clock.schedule_once(lambda dt: self.actualizar_dashboard(), 0.1)
             self.sm.current = 'dashboard'
@@ -59,8 +99,15 @@ class NeuroFitApp(MDApp):
 
         return self.sm
 
-    # ------------------- PERSISTENCIA -------------------
+    # =====================================================
+    # PERSISTENCIA
+    # =====================================================
     def cargar_datos(self):
+        
+        if not USER_DATA_FILE:
+            print("ERROR: USER_DATA_FILE es None")
+            return False
+
         if not os.path.exists(USER_DATA_FILE):
             return False
 
@@ -83,6 +130,11 @@ class NeuroFitApp(MDApp):
             return False
 
     def guardar_datos(self):
+        
+        if not DATA_DIR:
+            print("ERROR: DATA_DIR no encontrado")
+            return False
+        
         os.makedirs(DATA_DIR, exist_ok=True)
         self.user_data['last_modified'] = datetime.now().isoformat()
 
@@ -95,7 +147,11 @@ class NeuroFitApp(MDApp):
             print(f"Error guardando datos: {e}")
             return False
 
+    # =====================================================
+    # FORMULARIO
+    # =====================================================
     def guardar_datos_basicos(self):
+        
         form = self.sm.get_screen('form')
 
         try:
@@ -136,10 +192,13 @@ class NeuroFitApp(MDApp):
             self.sm.current = 'dashboard'
 
         except Exception as e:
-            toast(f"⚠️ {str(e)}")
+            toast(f"{str(e)}")
 
-    # ------------------- DASHBOARD -------------------
+    # =====================================================
+    # DASHBOARD
+    # =====================================================
     def actualizar_dashboard(self):
+        
         dash = self.sm.get_screen('dashboard')
 
         if not dash or not hasattr(dash, 'ids'):
@@ -152,6 +211,7 @@ class NeuroFitApp(MDApp):
 
         # Actualizar info del drawer lateral
         if 'drawer_info_label' in dash.ids:
+            
             objetivo_texto = u.get('objetivo', 'No seleccionado')
             animo_texto = u.get('animo', 'No seleccionado')
 
@@ -192,8 +252,11 @@ class NeuroFitApp(MDApp):
             )
             dash.ids.rutina_container.add_widget(placeholder)
 
-    # ------------------- SELECTORES -------------------
+    # =====================================================
+    # SELECTORES
+    # =====================================================
     def abrir_selector_objetivo_dashboard(self):
+        
         opciones = [
             "Perder peso",
             "Ganar músculo",
@@ -262,8 +325,11 @@ class NeuroFitApp(MDApp):
         self.menu_animo.dismiss()
         toast(f"Ánimo: {opcion}")
 
-    # ------------------- GENERAR RUTINA -------------------
+    # =====================================================
+    # GENERAR RUTINA
+    # =====================================================
     def generar_rutina(self):
+        
         u = self.user_data
 
         if not u.get('objetivo'):
@@ -349,7 +415,9 @@ class NeuroFitApp(MDApp):
     def cancelar_edicion(self):
         self.sm.current = 'dashboard'
 
-    # ------------------- ELIMINAR DATOS -------------------
+    # =====================================================
+    # ELIMINAR DATOS
+    # =====================================================
     def eliminar_datos(self):
         try:
             self.user_data = {}
@@ -369,7 +437,9 @@ class NeuroFitApp(MDApp):
         except Exception as e:
             toast(f"Error: {str(e)}")
 
-    # ------------------- ALTURA -------------------
+    # =====================================================
+    # ALTURA
+    # =====================================================
     def abrir_selector_altura(self, widget):
         opciones = ["< 50 cm"] + [f"{h} cm" for h in range(50, 211)] + ["> 210 cm"]
 
@@ -399,7 +469,9 @@ class NeuroFitApp(MDApp):
         if hasattr(self, '_altura_menu'):
             self._altura_menu.dismiss()
     
-    # ------------------- TARJETAS -------------------
+    # =====================================================
+    # TARJETAS
+    # =====================================================
     def crear_card_ejercicio(self, ejercicio):
 
         card = MDCard(
@@ -409,9 +481,6 @@ class NeuroFitApp(MDApp):
             size_hint_y=None,
             height="140dp",
             radius=[20],
-            # elevation=8,
-            # shadow_softness=12,
-            # shadow_offset=(0, -2),
             elevation=0,
             md_bg_color=(1, 1, 1, 1)
         )
