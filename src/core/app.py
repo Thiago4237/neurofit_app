@@ -43,16 +43,16 @@ print("USER_DATA_FILE:", USER_DATA_FILE)
 # APP
 # -----------------------------
 class NeuroFitApp(MDApp):
-    
+
     edit_mode = False
 
     def build(self):
-        
+
         self.theme_cls.primary_palette = "BlueGray"
-        self.theme_cls.primary_hue = "500"
-        
+        self.theme_cls.primary_hue = "700"
+
         self.user_data = {}
-        
+
         # -----------------------------
         # Engine IA
         # -----------------------------
@@ -61,7 +61,6 @@ class NeuroFitApp(MDApp):
         # -----------------------------
         # Cargar KV files
         # -----------------------------
-
         kv_files = [
             "src/kvs/welcome.kv",
             "src/kvs/form.kv",
@@ -69,17 +68,14 @@ class NeuroFitApp(MDApp):
         ]
 
         for kv in kv_files:
-
             kv_path = resource_find(kv)
-
             print("KV:", kv)
             print("KV_PATH:", kv_path)
-
             if kv_path:
                 Builder.load_file(kv_path)
             else:
                 print(f"ERROR: No se encontró {kv}")
-                
+
         # -----------------------------
         # ScreenManager
         # -----------------------------
@@ -103,7 +99,7 @@ class NeuroFitApp(MDApp):
     # PERSISTENCIA
     # =====================================================
     def cargar_datos(self):
-        
+
         if not USER_DATA_FILE:
             print("ERROR: USER_DATA_FILE es None")
             return False
@@ -130,11 +126,11 @@ class NeuroFitApp(MDApp):
             return False
 
     def guardar_datos(self):
-        
+
         if not DATA_DIR:
             print("ERROR: DATA_DIR no encontrado")
             return False
-        
+
         os.makedirs(DATA_DIR, exist_ok=True)
         self.user_data['last_modified'] = datetime.now().isoformat()
 
@@ -151,7 +147,7 @@ class NeuroFitApp(MDApp):
     # FORMULARIO
     # =====================================================
     def guardar_datos_basicos(self):
-        
+
         form = self.sm.get_screen('form')
 
         try:
@@ -168,6 +164,9 @@ class NeuroFitApp(MDApp):
 
             if not (1 <= horas <= 20):
                 raise ValueError("Horas entre 1 y 20")
+
+            if altura_str in ("Selecciona tu altura", ""):
+                raise ValueError("Selecciona tu altura")
 
             if altura_str == "< 50 cm":
                 altura_val = 40
@@ -198,7 +197,7 @@ class NeuroFitApp(MDApp):
     # DASHBOARD
     # =====================================================
     def actualizar_dashboard(self):
-        
+
         dash = self.sm.get_screen('dashboard')
 
         if not dash or not hasattr(dash, 'ids'):
@@ -211,9 +210,9 @@ class NeuroFitApp(MDApp):
 
         # Actualizar info del drawer lateral
         if 'drawer_info_label' in dash.ids:
-            
-            objetivo_texto = u.get('objetivo', 'No seleccionado')
-            animo_texto = u.get('animo', 'No seleccionado')
+
+            objetivo_texto = u.get('objetivo') or 'No seleccionado'
+            animo_texto = u.get('animo') or 'No seleccionado'
 
             dash.ids.drawer_info_label.text = (
                 f"[b]Edad:[/b] {u['edad']} años\n"
@@ -225,38 +224,38 @@ class NeuroFitApp(MDApp):
                 f"[i]Modificado: {u.get('last_modified', 'Nunca')[:16]}[/i]"
             )
 
-        # Restaurar botones de selección
-        if hasattr(dash.ids, 'btn_objetivo'):
-            obj = u.get('objetivo')
-            dash.ids.btn_objetivo.text = obj if obj else 'Seleccionar objetivo'
+        # Restaurar botones de selección (ahora son MDLabel dentro de MDCard)
+        obj = u.get('objetivo')
+        if 'btn_objetivo' in dash.ids:
+            dash.ids.btn_objetivo.text = obj if obj else 'Seleccionar'
 
-        if hasattr(dash.ids, 'btn_animo'):
-            anim = u.get('animo')
-            dash.ids.btn_animo.text = anim if anim else 'Seleccionar ánimo'
+        anim = u.get('animo')
+        if 'btn_animo' in dash.ids:
+            dash.ids.btn_animo.text = anim if anim else 'Seleccionar'
 
-        # Resetear zona de rutina: ocultar nivel/intensidad y mostrar placeholder
-        if hasattr(dash.ids, 'box_nivel_intensidad'):
+        # Resetear zona de rutina
+        if 'box_nivel_intensidad' in dash.ids:
             dash.ids.box_nivel_intensidad.height = 0
             dash.ids.box_nivel_intensidad.opacity = 0
 
-        if hasattr(dash.ids, 'rutina_container'):
+        if 'rutina_container' in dash.ids:
             dash.ids.rutina_container.clear_widgets()
-            from kivymd.uix.label import MDLabel
             placeholder = MDLabel(
-                id='rutina_placeholder',
                 text="Selecciona tu objetivo y ánimo,\nluego pulsa [b]Generar rutina[/b]",
                 halign="center",
                 adaptive_height=True,
                 theme_text_color="Hint",
                 markup=True,
+                size_hint_y=None,
+                height=dp(80),
             )
             dash.ids.rutina_container.add_widget(placeholder)
 
     # =====================================================
-    # SELECTORES
+    # SELECTORES DASHBOARD
     # =====================================================
     def abrir_selector_objetivo_dashboard(self):
-        
+
         opciones = [
             "Perder peso",
             "Ganar músculo",
@@ -264,21 +263,26 @@ class NeuroFitApp(MDApp):
             "Tonificación"
         ]
 
+        # Usamos el card como caller para que el menú se posicione bien
+        dash = self.sm.get_screen('dashboard')
+        caller = dash.ids.btn_objetivo  # MDLabel dentro del card
+
         menu_items = [
             {
                 "viewclass": "OneLineListItem",
                 "text": opt,
-                "height": dp(48),
+                "height": dp(52),
                 "on_release": lambda x=opt: self._seleccionar_objetivo(x)
             }
             for opt in opciones
         ]
 
         self.menu_obj = MDDropdownMenu(
-            caller=self.sm.get_screen('dashboard').ids.btn_objetivo,
+            caller=caller,
             items=menu_items,
-            width_mult=3,
-            max_height=dp(200)
+            width_mult=4,
+            max_height=dp(220),
+            position="auto",
         )
 
         self.menu_obj.open()
@@ -291,6 +295,7 @@ class NeuroFitApp(MDApp):
         toast(f"Objetivo: {opcion}")
 
     def abrir_selector_animo(self):
+
         opciones = [
             "Excelente",
             "Bien",
@@ -299,21 +304,25 @@ class NeuroFitApp(MDApp):
             "Desanimado"
         ]
 
+        dash = self.sm.get_screen('dashboard')
+        caller = dash.ids.btn_animo
+
         menu_items = [
             {
                 "viewclass": "OneLineListItem",
                 "text": opt,
-                "height": dp(48),
+                "height": dp(52),
                 "on_release": lambda x=opt: self._seleccionar_animo(x)
             }
             for opt in opciones
         ]
 
         self.menu_animo = MDDropdownMenu(
-            caller=self.sm.get_screen('dashboard').ids.btn_animo,
+            caller=caller,
             items=menu_items,
-            width_mult=3,
-            max_height=dp(200)
+            width_mult=4,
+            max_height=dp(260),
+            position="auto",
         )
 
         self.menu_animo.open()
@@ -329,7 +338,7 @@ class NeuroFitApp(MDApp):
     # GENERAR RUTINA
     # =====================================================
     def generar_rutina(self):
-        
+
         u = self.user_data
 
         if not u.get('objetivo'):
@@ -353,25 +362,25 @@ class NeuroFitApp(MDApp):
 
         # Mostrar bloque nivel/intensidad
         box = dash.ids.box_nivel_intensidad
-        box.height = 70
+        box.height = dp(56)
         box.opacity = 1
 
-        # Actualizar textos de nivel e intensidad
         dash.ids.lbl_nivel.text = f"Nivel: {resultado['nivel']}"
         dash.ids.lbl_intensidad.text = f"Intensidad: {resultado['intensidad'].capitalize()}"
 
-        # Limpiar contenedor (quita placeholder y tarjetas anteriores)
+        # Limpiar y rellenar tarjetas
         container = dash.ids.rutina_container
         container.clear_widgets()
 
-        # Crear tarjetas para cada ejercicio
         for ejercicio in resultado["rutina"]:
             card = self.crear_card_ejercicio(ejercicio)
             container.add_widget(card)
 
         toast("Rutina generada")
-    
-    # ------------------- FORMULARIO -------------------
+
+    # =====================================================
+    # FORMULARIO — helpers
+    # =====================================================
     def precargar_formulario(self):
         form = self.sm.get_screen('form')
         u = self.user_data
@@ -388,18 +397,17 @@ class NeuroFitApp(MDApp):
         else:
             altura_str = f"{altura_cm} cm"
 
+        # Ahora altura es un MDLabel, no MDTextField
         form.ids.altura.text = altura_str
         form.ids.horas.text = str(u.get('horas', ''))
 
     def nuevo_registro(self):
         self.edit_mode = False
-
         form = self.sm.get_screen('form')
         form.ids.edad.text = ''
         form.ids.peso.text = ''
-        form.ids.altura.text = ''
+        form.ids.altura.text = 'Selecciona tu altura'
         form.ids.horas.text = ''
-
         self.sm.current = 'form'
 
     def abrir_formulario_editar(self):
@@ -408,7 +416,6 @@ class NeuroFitApp(MDApp):
         self.sm.current = 'form'
 
         dash = self.sm.get_screen('dashboard')
-
         if hasattr(dash.ids, 'nav_drawer'):
             dash.ids.nav_drawer.set_state("close")
 
@@ -422,97 +429,149 @@ class NeuroFitApp(MDApp):
         try:
             self.user_data = {}
 
-            if os.path.exists(USER_DATA_FILE):
+            if USER_DATA_FILE and os.path.exists(USER_DATA_FILE):
                 os.remove(USER_DATA_FILE)
 
             dash = self.sm.get_screen('dashboard')
-
-            if hasattr(dash.ids, 'nav_drawer'):
+            if 'nav_drawer' in dash.ids:
                 dash.ids.nav_drawer.set_state("close")
 
             self.sm.current = 'welcome'
-
             toast("Información eliminada")
 
         except Exception as e:
             toast(f"Error: {str(e)}")
 
     # =====================================================
-    # ALTURA
+    # SELECTOR ALTURA — FIX: usa MDLabel + MDDropdownMenu
+    # sin depender de on_focus (que causa el bug fantasma)
     # =====================================================
-    def abrir_selector_altura(self, widget):
+    def abrir_selector_altura(self, caller_widget):
+        """
+        caller_widget es el Widget anchor invisible dentro del card de altura.
+        Esto evita el bug de foco-fantasma que ocurría con MDTextField readonly.
+        """
         opciones = ["< 50 cm"] + [f"{h} cm" for h in range(50, 211)] + ["> 210 cm"]
 
         menu_items = [
             {
                 "viewclass": "OneLineListItem",
                 "text": opt,
-                "on_release": lambda x=opt: self._seleccionar_altura(x, widget)
+                "height": dp(52),
+                "on_release": lambda x=opt: self._seleccionar_altura(x)
             }
             for opt in opciones
         ]
 
         self._altura_menu = MDDropdownMenu(
-            caller=widget,
+            caller=caller_widget,
             items=menu_items,
-            width_mult=3,
-            max_height=dp(200)
+            width_mult=4,
+            max_height=dp(260),
+            position="auto",
         )
 
         self._altura_menu.open()
 
-    def _seleccionar_altura(self, opcion, widget):
-        widget.text = opcion
-        widget.helper_text = "Seleccionado"
-        widget.focus = False
+    def _seleccionar_altura(self, opcion):
+        form = self.sm.get_screen('form')
+        # Actualizar el MDLabel que muestra la altura seleccionada
+        lbl = form.ids.altura
+        lbl.text = opcion
+        lbl.theme_text_color = "Custom"
+        lbl.text_color = (0.18, 0.36, 0.43, 1)
 
         if hasattr(self, '_altura_menu'):
             self._altura_menu.dismiss()
-    
+
     # =====================================================
-    # TARJETAS
+    # TARJETAS DE EJERCICIO
     # =====================================================
     def crear_card_ejercicio(self, ejercicio):
 
         card = MDCard(
             orientation="vertical",
-            padding="15dp",
-            spacing="10dp",
+            padding=[dp(14), dp(10), dp(14), dp(10)],
+            spacing=dp(0),
             size_hint_y=None,
-            height="140dp",
-            radius=[20],
+            height=dp(88),
+            radius=[dp(16)],
             elevation=0,
-            md_bg_color=(1, 1, 1, 1)
+            md_bg_color=(1, 1, 1, 1),
+        )
+
+        # Línea de acento izquierda (decorativa)
+        outer = MDBoxLayout(
+            orientation="horizontal",
+            spacing=dp(12),
+        )
+
+        acento = MDBoxLayout(
+            size_hint_x=None,
+            width=dp(4),
+            md_bg_color=(0.18, 0.36, 0.43, 1),
+            radius=[dp(4)],
         )
 
         contenido = MDBoxLayout(
             orientation="vertical",
-            spacing="8dp"
+            spacing=dp(6),
         )
 
         titulo = MDLabel(
             text=ejercicio["ejercicio"],
             bold=True,
-            font_style="H6"
+            font_style="Subtitle1",
+            theme_text_color="Custom",
+            text_color=(0.18, 0.36, 0.43, 1),
+            size_hint_y=None,
+            height=dp(26),
+            valign="middle",
         )
 
-        series = MDLabel(
-            text=f"Series: {ejercicio['series']}"
+        detalle = MDBoxLayout(
+            orientation="horizontal",
+            spacing=dp(0),
+            size_hint_y=None,
+            height=dp(22),
         )
 
-        repeticiones = MDLabel(
-            text=f"Repeticiones: {ejercicio['repeticiones']}"
-        )
+        datos = [
+            ("Series",      str(ejercicio['series'])),
+            ("Reps",        str(ejercicio['repeticiones'])),
+            ("Descanso",    ejercicio['descanso']),
+        ]
 
-        descanso = MDLabel(
-            text=f"Descanso: {ejercicio['descanso']}"
-        )
+        for i, (prefijo, valor) in enumerate(datos):
+            # Separador visual entre chips (excepto el primero)
+            if i > 0:
+                sep = MDLabel(
+                    text="|",
+                    size_hint_x=None,
+                    width=dp(16),
+                    halign="center",
+                    font_style="Caption",
+                    theme_text_color="Custom",
+                    text_color=(0.75, 0.80, 0.82, 1),
+                )
+                detalle.add_widget(sep)
+
+            chip = MDLabel(
+                text=f"[b]{prefijo}:[/b] {valor}",
+                markup=True,
+                font_style="Caption",
+                theme_text_color="Custom",
+                text_color=(0.35, 0.55, 0.60, 1),
+                halign="left",
+                valign="middle",
+            )
+            detalle.add_widget(chip)
 
         contenido.add_widget(titulo)
-        contenido.add_widget(series)
-        contenido.add_widget(repeticiones)
-        contenido.add_widget(descanso)
+        contenido.add_widget(detalle)
 
-        card.add_widget(contenido)
+        outer.add_widget(acento)
+        outer.add_widget(contenido)
+        card.add_widget(outer)
 
         return card

@@ -10,89 +10,156 @@
 
                 MDBoxLayout:
                     orientation: 'vertical'
+                    md_bg_color: 0.95, 0.96, 0.97, 1
 
+                    # ── TOP APP BAR ───────────────────────────────
                     MDTopAppBar:
                         title: "NeuroFit"
-                        elevation: 4
+                        elevation: 2
+                        md_bg_color: 0.18, 0.36, 0.43, 1
+                        specific_text_color: 1, 1, 1, 1
                         left_action_items: [["menu", lambda x: nav_drawer.set_state("open")]]
 
-                    # =====================================================
-                    # SELECTORES
-                    # =====================================================
-
-                    MDBoxLayout:
-                        orientation: 'horizontal'
-                        padding: 15
-                        spacing: 15
+                    # ── SELECTORES (tarjeta sobre fondo) ──────────
+                    MDCard:
                         size_hint_y: None
-                        height: 120
+                        height: dp(130)
+                        radius: [0, 0, dp(20), dp(20)]
+                        md_bg_color: 0.18, 0.36, 0.43, 1
+                        elevation: 0
+                        padding: [dp(16), dp(10), dp(16), dp(18)]
 
                         MDBoxLayout:
-                            orientation: "vertical"
-                            spacing: 8
+                            orientation: 'horizontal'
+                            spacing: dp(12)
 
-                            MDLabel:
-                                text: "Objetivo"
-                                halign: "center"
-                                theme_text_color: "Secondary"
+                            # Selector Objetivo
+                            MDBoxLayout:
+                                orientation: "vertical"
+                                spacing: dp(6)
 
-                            MDRaisedButton:
-                                id: btn_objetivo
-                                text: "Seleccionar objetivo"
-                                on_release: app.abrir_selector_objetivo_dashboard()
-                                size_hint_x: 1
+                                MDLabel:
+                                    text: "Objetivo"
+                                    halign: "center"
+                                    font_style: "Caption"
+                                    theme_text_color: "Custom"
+                                    text_color: 0.78, 0.90, 0.93, 1
+                                    size_hint_y: None
+                                    height: dp(18)
 
-                        MDBoxLayout:
-                            orientation: "vertical"
-                            spacing: 8
+                                MDCard:
+                                    size_hint_y: None
+                                    height: dp(48)
+                                    radius: [dp(10)]
+                                    md_bg_color: 0.24, 0.45, 0.54, 1
+                                    elevation: 0
+                                    on_release: app.abrir_selector_objetivo_dashboard()
 
-                            MDLabel:
-                                text: "Estado de ánimo"
-                                halign: "center"
-                                theme_text_color: "Secondary"
+                                    MDBoxLayout:
+                                        padding: [dp(10), 0, dp(6), 0]
 
-                            MDRaisedButton:
-                                id: btn_animo
-                                text: "Seleccionar ánimo"
-                                on_release: app.abrir_selector_animo()
-                                size_hint_x: 1
+                                        MDLabel:
+                                            id: btn_objetivo
+                                            text: "Seleccionar"
+                                            halign: "center"
+                                            font_style: "Button"
+                                            theme_text_color: "Custom"
+                                            text_color: 1, 1, 1, 1
 
-                    # =====================================================
-                    # NIVEL + INTENSIDAD (oculto hasta generar rutina)
-                    # =====================================================
+                                        MDIconButton:
+                                            icon: "chevron-down"
+                                            theme_text_color: "Custom"
+                                            text_color: 0.78, 0.90, 0.93, 1
+                                            size_hint_x: None
+                                            width: dp(30)
 
+                            # Selector Ánimo
+                            MDBoxLayout:
+                                orientation: "vertical"
+                                spacing: dp(6)
+
+                                MDLabel:
+                                    text: "Estado de ánimo"
+                                    halign: "center"
+                                    font_style: "Caption"
+                                    theme_text_color: "Custom"
+                                    text_color: 0.78, 0.90, 0.93, 1
+                                    size_hint_y: None
+                                    height: dp(18)
+
+                                MDCard:
+                                    id: btn_animo_card
+                                    size_hint_y: None
+                                    height: dp(48)
+                                    radius: [dp(10)]
+                                    md_bg_color: 0.24, 0.45, 0.54, 1
+                                    elevation: 0
+                                    on_release: app.abrir_selector_animo()
+
+                                    MDBoxLayout:
+                                        padding: [dp(10), 0, dp(6), 0]
+
+                                        MDLabel:
+                                            id: btn_animo
+                                            text: "Seleccionar"
+                                            halign: "center"
+                                            font_style: "Button"
+                                            theme_text_color: "Custom"
+                                            text_color: 1, 1, 1, 1
+
+                                        MDIconButton:
+                                            icon: "chevron-down"
+                                            theme_text_color: "Custom"
+                                            text_color: 0.78, 0.90, 0.93, 1
+                                            size_hint_x: None
+                                            width: dp(30)
+
+                    # ── NIVEL + INTENSIDAD ────────────────────────
                     MDBoxLayout:
                         id: box_nivel_intensidad
-                        orientation: "vertical"
-                        spacing: 5
-                        padding: [20, 0, 20, 0]
+                        orientation: "horizontal"
+                        spacing: dp(0)
                         size_hint_y: None
                         height: 0
                         opacity: 0
+                        padding: [dp(16), dp(8), dp(16), dp(4)]
 
-                        MDLabel:
-                            id: lbl_nivel
-                            text: "Nivel: -"
-                            halign: "center"
-                            font_style: "H6"
+                        MDCard:
+                            radius: [dp(10)]
+                            md_bg_color: 0.31, 0.80, 0.77, 0.18
+                            elevation: 0
+                            padding: [dp(12), dp(8)]
 
-                        MDLabel:
-                            id: lbl_intensidad
-                            text: "Intensidad: -"
-                            halign: "center"
-                            theme_text_color: "Secondary"
+                            MDBoxLayout:
+                                orientation: "horizontal"
+                                spacing: dp(16)
 
-                    # =====================================================
-                    # SCROLL RUTINAS
-                    # =====================================================
+                                MDLabel:
+                                    id: lbl_nivel
+                                    text: "Nivel: -"
+                                    halign: "center"
+                                    font_style: "Subtitle2"
+                                    bold: True
+                                    theme_text_color: "Custom"
+                                    text_color: 0.18, 0.36, 0.43, 1
 
+                                MDLabel:
+                                    id: lbl_intensidad
+                                    text: "Intensidad: -"
+                                    halign: "center"
+                                    font_style: "Caption"
+                                    theme_text_color: "Custom"
+                                    text_color: 0.35, 0.55, 0.60, 1
+
+                    # ── SCROLL RUTINAS ────────────────────────────
                     MDScrollView:
+                        do_scroll_x: False
 
                         MDGridLayout:
                             id: rutina_container
                             cols: 1
-                            spacing: 15
-                            padding: 20
+                            spacing: dp(12)
+                            padding: [dp(16), dp(16), dp(16), dp(100)]
                             adaptive_height: True
 
                             MDLabel:
@@ -102,77 +169,114 @@
                                 adaptive_height: True
                                 theme_text_color: "Hint"
                                 markup: True
+                                size_hint_y: None
+                                height: dp(80)
 
-                    # =====================================================
-                    # BOTÓN GENERAR
-                    # =====================================================
-
+                    # ── BOTÓN GENERAR (flotante abajo) ────────────
                     MDBoxLayout:
                         size_hint_y: None
-                        height: 80
-                        padding: 10
+                        height: dp(76)
+                        padding: [dp(20), dp(12), dp(20), dp(12)]
+                        md_bg_color: 0.95, 0.96, 0.97, 1
 
                         MDRaisedButton:
-                            text: "Generar rutina"
-                            size_hint_x: 0.8
-                            pos_hint: {"center_x": .5}
+                            text: "GENERAR RUTINA"
+                            md_bg_color: 0.18, 0.36, 0.43, 1
+                            size_hint_x: 1
+                            size_hint_y: None
+                            height: dp(52)
+                            font_size: '15sp'
                             on_release: app.generar_rutina()
 
-        # =====================================================
-        # MENU HAMBURGUESA
-        # =====================================================
-
+        # ── NAVIGATION DRAWER ─────────────────────────────────────
         MDNavigationDrawer:
             id: nav_drawer
-
-            radius: (0, 16, 16, 0)
+            radius: (0, dp(20), dp(20), 0)
             md_bg_color: 1, 1, 1, 1
-            scrim_color: 0, 0, 0, .35
+            scrim_color: 0, 0, 0, 0.4
             elevation: 4
 
             MDBoxLayout:
                 orientation: "vertical"
-                padding: 20
-                spacing: 15
-                adaptive_height: True
-                pos_hint: {"top": 1}
+                spacing: dp(0)
 
+                # Cabecera drawer
                 MDBoxLayout:
                     orientation: "vertical"
                     size_hint_y: None
-                    height: 120
-                    spacing: 10
+                    height: dp(140)
+                    md_bg_color: 0.18, 0.36, 0.43, 1
+                    padding: [dp(20), dp(28), dp(20), dp(20)]
+                    spacing: dp(6)
 
                     MDLabel:
                         text: "NeuroFit"
-                        halign: "center"
-                        font_style: "H6"
+                        font_style: "H5"
+                        bold: True
+                        theme_text_color: "Custom"
+                        text_color: 1, 1, 1, 1
+                        size_hint_y: None
+                        height: dp(44)
 
-                MDSeparator:
-                    height: "1dp"
+                    MDLabel:
+                        text: "Tu perfil activo"
+                        font_style: "Caption"
+                        theme_text_color: "Custom"
+                        text_color: 0.78, 0.90, 0.93, 1
+                        size_hint_y: None
+                        height: dp(20)
 
-                MDLabel:
-                    text: "Perfil NeuroFit"
-                    font_style: "Subtitle1"
-                    bold: True
-                    size_hint_y: None
-                    height: self.texture_size[1]
+                # Contenido drawer (scroll para pantallas pequeñas)
+                MDScrollView:
+                    do_scroll_x: False
 
-                MDLabel:
-                    id: drawer_info_label
-                    text: "Cargando datos..."
-                    markup: True
-                    adaptive_height: True
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        padding: [dp(20), dp(20), dp(20), dp(20)]
+                        spacing: dp(12)
+                        adaptive_height: True
 
-                Widget:
+                        MDLabel:
+                            text: "Perfil NeuroFit"
+                            font_style: "Subtitle1"
+                            bold: True
+                            theme_text_color: "Custom"
+                            text_color: 0.18, 0.36, 0.43, 1
+                            size_hint_y: None
+                            height: dp(28)
 
-                MDRectangleFlatButton:
-                    text: "Editar datos básicos"
-                    pos_hint: {"center_x": .5}
-                    on_release: app.abrir_formulario_editar()
+                        MDSeparator:
+                            height: dp(1)
 
-                MDRaisedButton:
-                    text: "Eliminar información"
-                    pos_hint: {"center_x": .5}
-                    md_bg_color: 1, 0.2, 0.2, 1
-                    on_release: app.eliminar_datos()
+                        MDLabel:
+                            id: drawer_info_label
+                            text: "Cargando datos..."
+                            markup: True
+                            adaptive_height: True
+                            theme_text_color: "Primary"
+                            font_style: "Body2"
+
+                        Widget:
+                            size_hint_y: None
+                            height: dp(20)
+
+                        MDSeparator:
+                            height: dp(1)
+
+                        MDRectangleFlatButton:
+                            text: "Editar datos básicos"
+                            size_hint_x: 1
+                            theme_text_color: "Custom"
+                            text_color: 0.18, 0.36, 0.43, 1
+                            line_color: 0.18, 0.36, 0.43, 1
+                            size_hint_y: None
+                            height: dp(48)
+                            on_release: app.abrir_formulario_editar()
+
+                        MDRaisedButton:
+                            text: "Eliminar información"
+                            size_hint_x: 1
+                            size_hint_y: None
+                            height: dp(48)
+                            md_bg_color: 0.85, 0.15, 0.15, 1
+                            on_release: app.eliminar_datos()

@@ -1,36 +1,97 @@
 <WelcomeScreen>:
     name: 'welcome'
+
     MDBoxLayout:
         orientation: 'vertical'
-        padding: 30
-        spacing: 20
+        md_bg_color: 0.18, 0.36, 0.43, 1  # #2E5D6E fondo principal
 
-        MDLabel:
-            text: "NeuroFit"
-            halign: 'center'
-            font_style: 'H3'
-            theme_text_color: 'Primary'
-            size_hint_y: None
-            height: 60
+        # ── BLOQUE SUPERIOR: logo + hero ──────────────────────────
+        MDBoxLayout:
+            orientation: 'vertical'
+            size_hint_y: 0.65
+            padding: [dp(32), dp(60), dp(32), dp(20)]
+            spacing: dp(16)
 
-        MDLabel:
-            text: "Tu entrenador inteligente con IA"
-            halign: 'center'
-            theme_text_color: 'Secondary'
-            size_hint_y: None
-            height: self.texture_size[1] + 10
+            # Icono decorativo (círculo con inicial)
+            MDBoxLayout:
+                size_hint_y: None
+                height: dp(90)
+                pos_hint: {'center_x': 0.5}
 
-        Widget:
-            size_hint_y: 1
+                MDCard:
+                    size_hint: None, None
+                    size: dp(90), dp(90)
+                    radius: [dp(45)]
+                    md_bg_color: 0.31, 0.48, 0.54, 1
+                    elevation: 0
+                    pos_hint: {'center_x': 0.5}
 
-        MDRaisedButton:
-            text: "Iniciar Proceso"
-            md_bg_color: app.theme_cls.primary_color
-            size_hint_y: None
-            height: 50
-            font_size: '18sp'
-            pos_hint: {'center_x': 0.5}
-            on_release: app.nuevo_registro()   # ← Cambio importante
+                    MDLabel:
+                        text: "N"
+                        halign: "center"
+                        valign: "center"
+                        font_style: "H3"
+                        bold: True
+                        theme_text_color: "Custom"
+                        text_color: 0.31, 0.80, 0.77, 1  # acento teal
 
-        Widget:
-            size_hint_y: 0.3
+            # Título principal
+            MDLabel:
+                text: "NeuroFit"
+                halign: 'center'
+                font_style: 'H3'
+                bold: True
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+                size_hint_y: None
+                height: dp(52)
+
+            # Subtítulo
+            MDLabel:
+                text: "Tu entrenador inteligente\nadaptado a tu estado de ánimo"
+                halign: 'center'
+                font_style: 'Subtitle1'
+                theme_text_color: "Custom"
+                text_color: 0.78, 0.90, 0.93, 1
+                size_hint_y: None
+                height: dp(56)
+
+        # ── BLOQUE INFERIOR: tarjeta blanca con botón ─────────────
+        MDCard:
+            size_hint_y: 0.35
+            radius: [dp(32), dp(32), 0, 0]
+            md_bg_color: 0.97, 0.97, 0.97, 1
+            elevation: 0
+            padding: [dp(32), dp(36), dp(32), dp(32)]
+
+            MDBoxLayout:
+                orientation: 'vertical'
+                spacing: dp(20)
+
+                MDLabel:
+                    text: "Comencemos"
+                    halign: 'center'
+                    font_style: 'H6'
+                    bold: True
+                    theme_text_color: "Custom"
+                    text_color: 0.18, 0.36, 0.43, 1
+                    size_hint_y: None
+                    height: dp(32)
+
+                MDLabel:
+                    text: "Ingresa tus datos y genera\nrutinas personalizadas con IA"
+                    halign: 'center'
+                    font_style: 'Body2'
+                    theme_text_color: "Custom"
+                    text_color: 0.45, 0.45, 0.45, 1
+                    size_hint_y: None
+                    height: dp(44)
+
+                MDRaisedButton:
+                    text: "INICIAR"
+                    md_bg_color: 0.18, 0.36, 0.43, 1
+                    size_hint_x: 1
+                    size_hint_y: None
+                    height: dp(52)
+                    font_size: '16sp'
+                    on_release: app.nuevo_registro()
