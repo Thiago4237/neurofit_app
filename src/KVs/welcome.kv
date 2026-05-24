@@ -3,39 +3,42 @@
 
     MDBoxLayout:
         orientation: 'vertical'
-        md_bg_color: 0.18, 0.36, 0.43, 1  # #2E5D6E fondo principal
+        md_bg_color: 0.18, 0.36, 0.43, 1
 
-        # ── BLOQUE SUPERIOR: logo + hero ──────────────────────────
+        # ── BLOQUE SUPERIOR ───────────────────────────────────────
         MDBoxLayout:
             orientation: 'vertical'
             size_hint_y: 0.65
             padding: [dp(32), dp(60), dp(32), dp(20)]
             spacing: dp(16)
 
-            # Icono decorativo (círculo con inicial)
-            MDBoxLayout:
+            # AnchorLayout garantiza centrado horizontal real
+            AnchorLayout:
+                anchor_x: 'center'
+                anchor_y: 'center'
                 size_hint_y: None
-                height: dp(90)
-                pos_hint: {'center_x': 0.5}
+                height: dp(110)
 
                 MDCard:
                     size_hint: None, None
-                    size: dp(90), dp(90)
-                    radius: [dp(45)]
-                    md_bg_color: 0.31, 0.48, 0.54, 1
-                    elevation: 0
-                    pos_hint: {'center_x': 0.5}
+                    size: dp(110), dp(110)
+                    radius: [dp(55)]
+                    md_bg_color: 0.24, 0.45, 0.54, 1
+                    elevation: 2
 
-                    MDLabel:
-                        text: "N"
-                        halign: "center"
-                        valign: "center"
-                        font_style: "H3"
-                        bold: True
-                        theme_text_color: "Custom"
-                        text_color: 0.31, 0.80, 0.77, 1  # acento teal
+                    AnchorLayout:
+                        anchor_x: 'center'
+                        anchor_y: 'center'
 
-            # Título principal
+                        MDIcon:
+                            icon: "dumbbell"
+                            font_size: "58sp"
+                            size_hint: None, None
+                            size: dp(58), dp(58)
+                            theme_text_color: "Custom"
+                            text_color: 0.31, 0.80, 0.77, 1
+
+            # Título
             MDLabel:
                 text: "NeuroFit"
                 halign: 'center'
@@ -56,7 +59,7 @@
                 size_hint_y: None
                 height: dp(56)
 
-        # ── BLOQUE INFERIOR: tarjeta blanca con botón ─────────────
+        # ── BLOQUE INFERIOR ───────────────────────────────────────
         MDCard:
             size_hint_y: 0.35
             radius: [dp(32), dp(32), 0, 0]
