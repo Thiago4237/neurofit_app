@@ -1,0 +1,100 @@
+<WelcomeScreen>:
+    name: 'welcome'
+
+    MDBoxLayout:
+        orientation: 'vertical'
+        md_bg_color: 0.18, 0.36, 0.43, 1
+
+        # ── BLOQUE SUPERIOR ───────────────────────────────────────
+        MDBoxLayout:
+            orientation: 'vertical'
+            size_hint_y: 0.65
+            padding: [dp(32), dp(60), dp(32), dp(20)]
+            spacing: dp(16)
+
+            # AnchorLayout garantiza centrado horizontal real
+            AnchorLayout:
+                anchor_x: 'center'
+                anchor_y: 'center'
+                size_hint_y: None
+                height: dp(110)
+
+                MDCard:
+                    size_hint: None, None
+                    size: dp(110), dp(110)
+                    radius: [dp(55)]
+                    md_bg_color: 0.24, 0.45, 0.54, 1
+                    elevation: 2
+
+                    AnchorLayout:
+                        anchor_x: 'center'
+                        anchor_y: 'center'
+
+                        MDIcon:
+                            icon: "dumbbell"
+                            font_size: "58sp"
+                            size_hint: None, None
+                            size: dp(58), dp(58)
+                            theme_text_color: "Custom"
+                            text_color: 0.31, 0.80, 0.77, 1
+
+            # Título
+            MDLabel:
+                text: "NeuroFit"
+                halign: 'center'
+                font_style: 'H3'
+                bold: True
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+                size_hint_y: None
+                height: dp(52)
+
+            # Subtítulo
+            MDLabel:
+                text: "Tu entrenador inteligente\nadaptado a tu estado de ánimo"
+                halign: 'center'
+                font_style: 'Subtitle1'
+                theme_text_color: "Custom"
+                text_color: 0.78, 0.90, 0.93, 1
+                size_hint_y: None
+                height: dp(56)
+
+        # ── BLOQUE INFERIOR ───────────────────────────────────────
+        MDCard:
+            size_hint_y: 0.35
+            radius: [dp(32), dp(32), 0, 0]
+            md_bg_color: 0.97, 0.97, 0.97, 1
+            elevation: 0
+            padding: [dp(32), dp(36), dp(32), dp(32)]
+
+            MDBoxLayout:
+                orientation: 'vertical'
+                spacing: dp(20)
+
+                MDLabel:
+                    text: "Comencemos"
+                    halign: 'center'
+                    font_style: 'H6'
+                    bold: True
+                    theme_text_color: "Custom"
+                    text_color: 0.18, 0.36, 0.43, 1
+                    size_hint_y: None
+                    height: dp(32)
+
+                MDLabel:
+                    text: "Ingresa tus datos y genera\nrutinas personalizadas con IA"
+                    halign: 'center'
+                    font_style: 'Body2'
+                    theme_text_color: "Custom"
+                    text_color: 0.45, 0.45, 0.45, 1
+                    size_hint_y: None
+                    height: dp(44)
+
+                MDRaisedButton:
+                    text: "INICIAR"
+                    md_bg_color: 0.18, 0.36, 0.43, 1
+                    size_hint_x: 1
+                    size_hint_y: None
+                    height: dp(52)
+                    font_size: '16sp'
+                    on_release: app.nuevo_registro()

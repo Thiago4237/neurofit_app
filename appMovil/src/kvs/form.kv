@@ -1,0 +1,196 @@
+<FormScreen>:
+    name: 'form'
+
+    MDBoxLayout:
+        orientation: 'vertical'
+        md_bg_color: 0.97, 0.97, 0.97, 1
+
+        # ── HEADER ────────────────────────────────────────────────
+        MDBoxLayout:
+            orientation: 'vertical'
+            size_hint_y: None
+            height: dp(100)
+            md_bg_color: 0.18, 0.36, 0.43, 1
+            padding: [dp(20), dp(16), dp(20), dp(12)]
+            spacing: dp(4)
+
+            MDLabel:
+                text: "Datos Personales"
+                halign: 'center'
+                font_style: 'H5'
+                bold: True
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+                size_hint_y: None
+                height: dp(44)
+
+            MDLabel:
+                text: "Completa tu perfil para continuar"
+                halign: 'center'
+                font_style: 'Caption'
+                theme_text_color: "Custom"
+                text_color: 0.78, 0.90, 0.93, 1
+                size_hint_y: None
+                height: dp(24)
+
+        # ── FORMULARIO (scroll) ───────────────────────────────────
+        MDScrollView:
+            do_scroll_x: False
+
+            MDBoxLayout:
+                orientation: 'vertical'
+                padding: [dp(20), dp(24), dp(20), dp(24)]
+                spacing: dp(8)
+                adaptive_height: True
+
+                # -- Edad --
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: dp(72)
+                    spacing: dp(4)
+
+                    MDLabel:
+                        text: "Edad (años)"
+                        font_style: 'Caption'
+                        bold: True
+                        theme_text_color: "Custom"
+                        text_color: 0.18, 0.36, 0.43, 1
+                        size_hint_y: None
+                        height: dp(20)
+
+                    MDTextField:
+                        id: edad
+                        hint_text: "Ej: 25"
+                        helper_text: "Entre 15 y 80 años"
+                        helper_text_mode: "on_focus"
+                        mode: "rectangle"
+                        input_filter: "int"
+                        line_color_normal: 0.82, 0.82, 0.82, 1
+                        line_color_focus: 0.18, 0.36, 0.43, 1
+
+                # -- Peso --
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: dp(72)
+                    spacing: dp(4)
+
+                    MDLabel:
+                        text: "Peso (kg)"
+                        font_style: 'Caption'
+                        bold: True
+                        theme_text_color: "Custom"
+                        text_color: 0.18, 0.36, 0.43, 1
+                        size_hint_y: None
+                        height: dp(20)
+
+                    MDTextField:
+                        id: peso
+                        hint_text: "Ej: 70.5"
+                        helper_text: "Entre 30 y 200 kg"
+                        helper_text_mode: "on_focus"
+                        mode: "rectangle"
+                        input_filter: "float"
+                        line_color_normal: 0.82, 0.82, 0.82, 1
+                        line_color_focus: 0.18, 0.36, 0.43, 1
+
+                # -- Altura (selector) ───────────────────────────
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: dp(80)
+                    spacing: dp(4)
+
+                    MDLabel:
+                        text: "Altura"
+                        font_style: 'Caption'
+                        bold: True
+                        theme_text_color: "Custom"
+                        text_color: 0.18, 0.36, 0.43, 1
+                        size_hint_y: None
+                        height: dp(20)
+
+                    # ── Botón selector de altura ──
+                    # Usamos MDRaisedButton en lugar de MDTextField
+                    # para evitar el bug del foco-fantasma en móvil
+                    MDCard:
+                        size_hint_y: None
+                        height: dp(52)
+                        radius: [dp(4)]
+                        md_bg_color: 1, 1, 1, 1
+                        elevation: 0
+                        line_color: 0.82, 0.82, 0.82, 1
+
+                        MDBoxLayout:
+                            padding: [dp(12), 0, dp(12), 0]
+                            spacing: dp(8)
+
+                            MDLabel:
+                                id: altura
+                                text: "Selecciona tu altura"
+                                valign: "center"
+                                theme_text_color: "Custom"
+                                text_color: 0.6, 0.6, 0.6, 1
+
+                            MDIconButton:
+                                icon: "chevron-down"
+                                theme_text_color: "Custom"
+                                text_color: 0.18, 0.36, 0.43, 1
+                                size_hint_x: None
+                                width: dp(36)
+                                on_release: app.abrir_selector_altura(altura_btn_anchor)
+
+                        # Anchor invisible para posicionar el menú
+                        Widget:
+                            id: altura_btn_anchor
+                            size_hint: None, None
+                            size: dp(1), dp(1)
+                            pos_hint: {'center_x': 0.5, 'y': 0}
+
+                # -- Horas/semana --
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: dp(72)
+                    spacing: dp(4)
+
+                    MDLabel:
+                        text: "Horas disponibles / semana"
+                        font_style: 'Caption'
+                        bold: True
+                        theme_text_color: "Custom"
+                        text_color: 0.18, 0.36, 0.43, 1
+                        size_hint_y: None
+                        height: dp(20)
+
+                    MDTextField:
+                        id: horas
+                        hint_text: "Ej: 6"
+                        helper_text: "Entre 1 y 20 horas"
+                        helper_text_mode: "on_focus"
+                        mode: "rectangle"
+                        input_filter: "int"
+                        line_color_normal: 0.82, 0.82, 0.82, 1
+                        line_color_focus: 0.18, 0.36, 0.43, 1
+
+                # Espacio extra al final para que el scroll no tape el botón
+                Widget:
+                    size_hint_y: None
+                    height: dp(16)
+
+        # ── BOTÓN GUARDAR ─────────────────────────────────────────
+        MDBoxLayout:
+            size_hint_y: None
+            height: dp(80)
+            padding: [dp(20), dp(14), dp(20), dp(14)]
+            md_bg_color: 0.97, 0.97, 0.97, 1
+
+            MDRaisedButton:
+                text: "GUARDAR Y CONTINUAR"
+                md_bg_color: 0.18, 0.36, 0.43, 1
+                size_hint_x: 1
+                size_hint_y: None
+                height: dp(52)
+                font_size: '15sp'
+                on_release: app.guardar_datos_basicos()

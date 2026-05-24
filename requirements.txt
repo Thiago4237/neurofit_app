@@ -1,8 +1,0 @@
-kivymd==1.1.1
-numpy
-pandas
-scikit-learn
-tensorflow
-joblib
-scikit-fuzzy
-kivy>=2.1.0
